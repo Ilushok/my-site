@@ -3,7 +3,11 @@ from .models import Category
 
 
 class NewsForm(forms.Form):
-    title = forms.CharField(label='Заглавие',max_length=150)
-    content = forms.CharField(label='Содержание')
-    is_published = forms.BooleanField(label='Опубликовано')
-    category = forms.ModelChoiceField(queryset=Category.objects.all())
+    title = forms.CharField(label='Название :',max_length=150, widget=forms.TextInput(attrs={"class":"form-control"}))
+    content = forms.CharField(label='Содержание',required=False, widget=forms.Textarea(attrs={
+        "class":"form-control",
+        "rows": 5
+
+    }))
+    is_published = forms.BooleanField(label='Опубликовано?',initial=True)
+    category = forms.ModelChoiceField(empty_label='Выбрать категорию', queryset=Category.objects.all(),widget=forms.Select(attrs={"class":"form-control"}),)
