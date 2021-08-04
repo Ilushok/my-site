@@ -2,9 +2,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView,CreateView
 from django.urls import reverse_lazy
 from .models import News, Category
+from django.core.paginator import Paginator
 
 from .forms import NewsForm
 
+def test(request):
+    objects = ['11','22','33','44','55','66','77','88','99']
+    paginator = Paginator(objects,2)
+    page_num = request.GET.get('page',1)
+    page_objects = paginator.get_page(page_num)
+    return render(request,'news/test.html',{'page_obj' : page_objects})
 
 class HomeNews(ListView):
     model = News
@@ -19,7 +26,7 @@ class HomeNews(ListView):
         return context
 
     def get_queryset(self):
-        return News.objects.filter(is_published=True)
+        return News.objects.filter(is_published=True).select_related('category')
 
 
 class NewsByCategory(ListView):
@@ -34,7 +41,7 @@ class NewsByCategory(ListView):
         return context
 
     def get_queryset(self):
-        return News.objects.filter(category_id=self.kwargs['category_id'], is_published=True)
+        return News.objects.filter(category_id=self.kwargs['category_id'], is_published=True).select_related('category')
 
 class ViewNews(DetailView):
     model = News
